@@ -1,8 +1,20 @@
-#FROM python:3.9
-FROM python:latest@sha256:9255d1993f6d28b8a1cd611b108adbdfa38cb7ccc46ddde8ea7d734b6c845e32
-WORKDIR app
-COPY . /app
-RUN pip install -r requirements.txt 
-EXPOSE 8001
-CMD ["python","manage.py","runserver","0.0.0.0:8001"]
+# Use the latest Python image
+FROM python:3.9-slim
 
+# Set the working directory
+WORKDIR /app
+
+# Install system dependencies (distutils for pip and other essentials)
+RUN apt-get update && apt-get install -y python3-distutils python3-pip build-essential
+
+# Copy project files into the container
+COPY . /app
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Expose the application port
+EXPOSE 8001
+
+# Default command to run the Django server
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8001"]
